@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+        }
+
+        #calculator {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            width: 300px;
+        }
+
+        #display {
+            font-size: 1.8em;
+            text-align: right;
+            padding: 10px;
+            background-color: #ecf0f1;
+            color: #333;
+            border-bottom: 1px solid #bdc3c7;
+            height: 70px;
+            overflow: hidden;
+        }
+
+        #buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        button {
+            font-size: 1.2em;
+            padding: 15px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button.operator {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+
+        button.double {
+            grid-column: span 2;
+        }
+
+        button.clear {
+            background-color: #95a5a6;
+            color: #fff;
+        }
+
+        button.scientific {
+            background-color: #2ecc71;
+            color: #fff;
+        }
+
+        button:hover {
+            background-color: #d2d7d3;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="calculator">
+        <div id="display">0</div>
+        <div id="buttons">
+            <button>7</button>
+            <button>8</button>
+            <button>9</button>
+            <button class="operator">/</button>
+            <button class="scientific">√</button>
+            <button>4</button>
+            <button>5</button>
+            <button>6</button>
+            <button class="operator">*</button>
+            <button class="scientific">x²</button>
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+            <button class="operator">-</button>
+            <button class="scientific">sin</button>
+            <button class="double">0</button>
+            <button>.</button>
+            <button class="operator">=</button>
+            <button class="operator">+</button>
+            <button class="clear double">C</button>
+            <button class="scientific">cos</button>
+            <button class="scientific">tan</button>
+            <button class="scientific">log</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const display = document.getElementById("display");
+            const buttons = document.getElementById("buttons");
+
+            let currentInput = "";
+            let currentOperator = "";
+            let prevInput = "";
+
+            buttons.addEventListener("click", function (e) {
+                if (e.target.tagName === "BUTTON") {
+                    const buttonText = e.target.innerText;
+
+                    if (!isNaN(buttonText) || buttonText === ".") {
+                        currentInput += buttonText;
+                    } else if (buttonText === "C") {
+                        currentInput = "";
+                        currentOperator = "";
+                        prevInput = "";
+                    } else if (buttonText === "=") {
+                        calculate();
+                    } else if (buttonText === "√" || buttonText === "x²" || buttonText === "sin" || buttonText === "cos" || buttonText === "tan" || buttonText === "log") {
+                        applyScientificFunction(buttonText);
+                    } else {
+                        if (currentOperator !== "") {
+                            calculate();
+                        }
+                        currentOperator = buttonText;
+                        prevInput = currentInput;
+                        currentInput = "";
+                    }
+
+                    updateDisplay();
+                }
+            });
+
+            function calculate() {
+                const num1 = parseFloat(prevInput);
+                const num2 = parseFloat(currentInput);
+
+                if (currentOperator === "+") {
+                    currentInput = (num1 + num2).toString();
+                } else if (currentOperator === "-") {
+                    currentInput = (num1 - num2).toString();
+                } else if (currentOperator === "*") {
+                    currentInput = (num1 * num2).toString();
+                } else if (currentOperator === "/") {
+                    if (num2 !== 0) {
+                        currentInput = (num1 / num2).toString();
+                    } else {
+                        currentInput = "Error";
+                    }
+                }
+
+                currentOperator = "";
+                prevInput = "";
+            }
+
+            function applyScientificFunction(func) {
+                const num = parseFloat(currentInput);
+
+                switch (func) {
+                    case "√":
+                        currentInput = Math.sqrt(num).toString();
+                        break;
+                    case "x²":
+                        currentInput = Math.pow(num, 2).toString();
+                        break;
+                    case "sin":
+                        currentInput = Math.sin(num).toString();
+                        break;
+                    case "cos":
+                        currentInput = Math.cos(num).toString();
+                        break;
+                    case "tan":
+                        currentInput = Math.tan(num).toString();
+                        break;
+                    case "log":
+                        currentInput = Math.log10(num).toString();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            function updateDisplay() {
+                display.innerText = currentInput;
+            }
+        });
+    </script>
+</body>
+
+</html>
